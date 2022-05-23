@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "47602182013",
+    "project_id": "karinderya-system",
+    "storage_bucket": "karinderya-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47602182013:android:739c6f81b06df3fa388e14",
+        "android_client_info": {
+          "package_name": "com.cjtignap.karinderya_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47602182013-jvt5fc4ho9sa920rch212e9foteqdh3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDms-G_jPFalj4Cd8Ea4bhO_CaD1QLw4wY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47602182013-jvt5fc4ho9sa920rch212e9foteqdh3e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
