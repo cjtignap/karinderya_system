@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:karinderya_system/screens/store_screen.dart';
 import 'package:karinderya_system/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../constants.dart';
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
     await Firebase.initializeApp();
     _auth = FirebaseAuth.instance;
     if (_auth!.currentUser != null) {
-      Navigator.pushNamed(context, WelcomScreen.id);
+      Navigator.pushNamed(context, StoreScreen.id);
     }
   }
 
@@ -144,8 +145,13 @@ class _LoginState extends State<Login> {
                                     password: password,
                                   );
                                   if (user != null) {
-                                    Navigator.pushNamed(
-                                        context, WelcomScreen.id);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => StoreScreen(
+                                                  user: user.user!,
+                                                  auth: _auth!,
+                                                )));
                                   }
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(

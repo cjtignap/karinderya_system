@@ -24,32 +24,7 @@ class _WelcomScreenState extends State<WelcomScreen> {
     return SafeArea(
       child: Scaffold(
         body: Column(
-          children: [
-            Container(
-              child: Padding(
-                padding: EdgeInsets.only(right: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      child: const Text('Logout'),
-                      onTap: () async {
-                        await _auth!.signOut();
-                        Navigator.pushNamed(context, Login.id);
-                      },
-                    )
-                  ],
-                ),
-              ),
-              width: double.infinity,
-              color: Colors.white,
-              height: 50,
-            ),
-            Container(
-              color: Colors.white,
-              child: Text('Welcome ${currentUser!.email}'),
-            ),
-          ],
+          children: [],
         ),
       ),
     );

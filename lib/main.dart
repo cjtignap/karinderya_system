@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:karinderya_system/screens/register.dart';
+import 'package:karinderya_system/screens/store_screen.dart';
 import 'package:karinderya_system/screens/welcome_screen.dart';
 import './constants.dart';
 import './screens/login.dart';
@@ -23,12 +24,12 @@ class MyApp extends StatelessWidget {
         WelcomScreen.id: (context) => WelcomScreen(),
       },
       theme: ThemeData().copyWith(
-        colorScheme: ColorScheme.light().copyWith(
-          primary: const Color(0xff1d2030),
-        ),
-        scaffoldBackgroundColor: kPrimaryColor,
-        backgroundColor: kPrimaryColor,
-      ),
+          colorScheme: ColorScheme.light().copyWith(
+            primary: const Color(0xff1d2030),
+          ),
+          scaffoldBackgroundColor: kPrimaryColor,
+          backgroundColor: kPrimaryColor,
+          bottomSheetTheme: BottomSheetThemeData()),
     );
   }
 }
