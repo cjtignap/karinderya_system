@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:karinderya_system/models/user_details.dart';
 import 'package:karinderya_system/screens/store_screen.dart';
 import 'package:karinderya_system/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -19,6 +21,7 @@ class _LoginState extends State<Login> {
   String email = '';
   String password = '';
   FirebaseAuth? _auth;
+  FirebaseFirestore? _firestore;
   User? user;
   @override
   void initState() {
@@ -29,8 +32,24 @@ class _LoginState extends State<Login> {
   void initFirebase() async {
     await Firebase.initializeApp();
     _auth = FirebaseAuth.instance;
+    _firestore = FirebaseFirestore.instance;
+
+    var snapshot = await _firestore!
+        .collection('user_details')
+        .where('email', isEqualTo: _auth!.currentUser!.email)
+        .get();
+    var result = snapshot.docs.first;
     if (_auth!.currentUser != null) {
-      Navigator.pushNamed(context, StoreScreen.id);
+      Navigator.push(context, MaterialPageRoute(builder: ((context) {
+        return StoreScreen(
+          user: _auth!.currentUser!,
+          auth: _auth!,
+          userDetails: UserDetails(
+            name: result.get('name'),
+            userType: result.get('user_type'),
+          ),
+        );
+      })));
     }
   }
 
@@ -145,13 +164,25 @@ class _LoginState extends State<Login> {
                                     password: password,
                                   );
                                   if (user != null) {
+                                    var snapshot = await _firestore!
+                                        .collection('user_details')
+                                        .where('email',
+                                            isEqualTo: user.user!.email)
+                                        .get();
+                                    var result = snapshot.docs.first;
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => StoreScreen(
-                                                  user: user.user!,
-                                                  auth: _auth!,
-                                                )));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => StoreScreen(
+                                          user: user.user!,
+                                          auth: _auth!,
+                                          userDetails: UserDetails(
+                                            name: result.get('name'),
+                                            userType: result.get('user_type'),
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   }
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(

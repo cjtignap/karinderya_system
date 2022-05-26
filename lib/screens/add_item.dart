@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:karinderya_system/models/store_data.dart';
+import 'package:karinderya_system/models/user_details.dart';
 import 'dart:io';
 import '../constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AddItem extends StatefulWidget {
   @override
   State<AddItem> createState() => _AddItemState();
+
+  final UserDetails userDetails;
+  AddItem({required this.userDetails});
 }
 
 class _AddItemState extends State<AddItem> {
@@ -18,6 +22,7 @@ class _AddItemState extends State<AddItem> {
   String price = '';
   String quantity = '';
   String imageName = '';
+  String description = '';
   File? file;
   FirebaseFirestore? _firestore;
   FirebaseStorage? _firebaseStorage;
@@ -34,16 +39,17 @@ class _AddItemState extends State<AddItem> {
   Future<void> uploadItem(
       String foodName, String quantity, String price, String imageName) async {
     await _firestore!.collection('live_items').add({
-      'karinderya_name': _user!.email,
+      'karinderya_name': widget.userDetails.name,
       'food_name': foodName,
       'price': price,
       'quantity': quantity,
       'image_name': imageName,
+      'description': description,
     });
   }
 
   Future<void> uploadImage(File file) async {
-    await _firebaseStorage!.ref('/images').child(imageName).putFile(file);
+    await _firebaseStorage!.ref('/food_images').child(imageName).putFile(file);
   }
 
   @override
@@ -61,18 +67,25 @@ class _AddItemState extends State<AddItem> {
                   ? const Text('Fill all required fields first!',
                       style: TextStyle(color: Colors.red))
                   : const SizedBox(height: 0),
-              const Text(
-                'Food name',
-                style: kAddItemTextStyle,
-              ),
-              TextField(
-                onChanged: (newText) {
-                  foodName = newText;
-                },
-              ),
-              const SizedBox(height: 15),
               Row(
                 children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Food name',
+                          style: kAddItemTextStyle,
+                        ),
+                        TextField(
+                          onChanged: (newText) {
+                            foodName = newText;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       children: [
@@ -110,6 +123,19 @@ class _AddItemState extends State<AddItem> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
+              Text('Description'),
+              TextField(
+                maxLines: null,
+                maxLength: 100,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+                onChanged: (newText) {
+                  description = newText;
+                },
+              ),
               const SizedBox(height: 15),
               Row(
                 children: [
@@ -122,7 +148,8 @@ class _AddItemState extends State<AddItem> {
                       FilePickerResult? result = await FilePicker.platform
                           .pickFiles(type: FileType.image);
                       if (result != null) {
-                        imageName = (result.files[0].name);
+                        imageName =
+                            DateTime.now().millisecondsSinceEpoch.toString();
                         setState(() {
                           file = File(result.files.single.path!);
                         });

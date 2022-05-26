@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:karinderya_system/screens/login.dart';
 import 'package:karinderya_system/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants.dart';
 
 class Register extends StatefulWidget {
@@ -17,12 +19,9 @@ class _RegisterState extends State<Register> {
   String email = '';
   String password = '';
   String fullName = '';
-  FirebaseAuth? _auth;
-  @override
-  void initState() {
-    super.initState();
-    _auth = FirebaseAuth.instance;
-  }
+  String userType = 'customer';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -78,25 +77,48 @@ class _RegisterState extends State<Register> {
                     padding: const EdgeInsets.only(
                       left: 30,
                       right: 30,
-                      top: 45,
+                      top: 40,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const Text('User Type'),
+                        Row(
+                          children: [
+                            Container(
+                                child: Row(
+                              children: [
+                                Radio<String>(
+                                    value: 'customer',
+                                    groupValue: userType,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        userType = value!;
+                                      });
+                                    }),
+                                Text('Customer')
+                              ],
+                            )),
+                            Container(
+                                child: Row(
+                              children: [
+                                Radio<String>(
+                                    value: 'karinderya',
+                                    groupValue: userType,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        userType = value!;
+                                      });
+                                    }),
+                                Text('Karinderya')
+                              ],
+                            )),
+                          ],
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Full Name'),
-                            TextField(
-                              keyboardType: TextInputType.name,
-                              decoration: const InputDecoration(
-                                hintText: 'Juan Dela Cruz',
-                              ),
-                              autofocus: true,
-                              onChanged: (newText) {},
-                            ),
-                            const SizedBox(height: 15),
                             const Text('Email'),
                             TextField(
                               keyboardType: TextInputType.emailAddress,
@@ -107,7 +129,21 @@ class _RegisterState extends State<Register> {
                                 email = newText;
                               },
                             ),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 10),
+                            Text(userType == 'customer'
+                                ? 'Full name'
+                                : 'Karinderya name'),
+                            TextField(
+                              keyboardType: TextInputType.name,
+                              decoration: const InputDecoration(
+                                hintText: 'Juan Dela Cruz',
+                              ),
+                              autofocus: true,
+                              onChanged: (newText) {
+                                fullName = newText;
+                              },
+                            ),
+                            const SizedBox(height: 10),
                             const Text('Password'),
                             TextField(
                               onChanged: (newText) {
@@ -131,12 +167,19 @@ class _RegisterState extends State<Register> {
                                     showSpinner = true;
                                   });
                                   try {
-                                    var user = await _auth!
+                                    var user = await _auth
                                         .createUserWithEmailAndPassword(
                                             email: email, password: password);
+
+                                    await _firestore
+                                        .collection('user_details')
+                                        .add({
+                                      'email': email,
+                                      'user_type': userType,
+                                      'name': fullName,
+                                    });
                                     if (user != null) {
-                                      Navigator.pushNamed(
-                                          context, WelcomScreen.id);
+                                      Navigator.pushNamed(context, Login.id);
                                     }
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
