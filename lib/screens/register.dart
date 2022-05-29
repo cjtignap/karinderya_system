@@ -200,7 +200,7 @@ class _RegisterState extends State<Register> {
                                 },
                                 child: Container(
                                   decoration: const BoxDecoration(
-                                    color: kAccentColor,
+                                    color: kPrimaryColor,
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(5),
                                     ),

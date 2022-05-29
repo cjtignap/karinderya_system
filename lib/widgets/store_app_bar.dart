@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:karinderya_system/constants.dart';
 import 'package:karinderya_system/models/store_data.dart';
-import 'package:provider/provider.dart';
+import 'package:karinderya_system/models/user_details.dart';
+import 'package:karinderya_system/screens/message_list.dart';
+import 'package:karinderya_system/screens/messages_screen.dart';
 import '../screens/login.dart';
 
 class StoreAppBar extends StatelessWidget {
@@ -41,9 +45,9 @@ class _ProfileDropdownState extends State<ProfileDropdown> {
       value: 'profile',
     ),
     DropdownMenuItem(
-      child:
-          ContextItem(image: AssetImage('images/history.jpg'), text: 'History'),
-      value: 'history',
+      child: ContextItem(
+          image: AssetImage('images/messenger.jpg'), text: 'Messages'),
+      value: 'messages',
     ),
     DropdownMenuItem(
       child:
@@ -62,8 +66,42 @@ class _ProfileDropdownState extends State<ProfileDropdown> {
             currentItem = contextItem!;
 
             if (contextItem == 'logout') {
-              await Provider.of<StoreData>(context, listen: false).logOut();
-              Navigator.pushNamed(context, Login.id);
+              await FirebaseAuth.instance.signOut();
+              Navigator.pop(context);
+            } else if (contextItem == 'messages') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: ((context) => FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('user_details')
+                            .where('email',
+                                isEqualTo:
+                                    FirebaseAuth.instance.currentUser!.email)
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            var qSnap = snapshot.data
+                                as QuerySnapshot<Map<String, dynamic>>;
+                            var userDetailMap = qSnap.docs.first;
+                            return MessageList(
+                              userDetails: UserDetails(
+                                name: userDetailMap.get('name'),
+                                userType: userDetailMap.get('user_type'),
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.lightBlueAccent,
+                              ),
+                            );
+                          }
+                        },
+                      )),
+                ),
+              );
             }
           });
         },

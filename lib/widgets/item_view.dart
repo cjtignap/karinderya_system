@@ -56,7 +56,7 @@ class _ItemViewState extends State<ItemView> {
                         Text(widget.item.karinderyaName),
                         SizedBox(height: 10),
                         Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.',
+                          widget.item.description,
                           style: TextStyle(
                             color: Colors.black54,
                             fontSize: 13,

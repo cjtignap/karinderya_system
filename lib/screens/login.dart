@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:karinderya_system/models/user_details.dart';
+import 'package:karinderya_system/screens/customer_screen.dart';
 import 'package:karinderya_system/screens/store_screen.dart';
 import 'package:karinderya_system/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -40,16 +41,37 @@ class _LoginState extends State<Login> {
         .get();
     var result = snapshot.docs.first;
     if (_auth!.currentUser != null) {
-      Navigator.push(context, MaterialPageRoute(builder: ((context) {
-        return StoreScreen(
-          user: _auth!.currentUser!,
-          auth: _auth!,
-          userDetails: UserDetails(
-            name: result.get('name'),
-            userType: result.get('user_type'),
+      if (result.get('user_type') == 'karinderya') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: ((context) {
+              return StoreScreen(
+                user: _auth!.currentUser!,
+                auth: _auth!,
+                userDetails: UserDetails(
+                  name: result.get('name'),
+                  userType: result.get('user_type'),
+                ),
+              );
+            }),
           ),
         );
-      })));
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: ((context) {
+              return CustomerScreen(
+                userDetails: UserDetails(
+                  name: result.get('name'),
+                  userType: result.get('user_type'),
+                ),
+              );
+            }),
+          ),
+        );
+      }
     }
   }
 
@@ -170,19 +192,37 @@ class _LoginState extends State<Login> {
                                             isEqualTo: user.user!.email)
                                         .get();
                                     var result = snapshot.docs.first;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => StoreScreen(
-                                          user: user.user!,
-                                          auth: _auth!,
-                                          userDetails: UserDetails(
-                                            name: result.get('name'),
-                                            userType: result.get('user_type'),
+                                    if (result.get('user_type') ==
+                                        'karinderya') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => StoreScreen(
+                                            user: user.user!,
+                                            auth: _auth!,
+                                            userDetails: UserDetails(
+                                              name: result.get('name'),
+                                              userType: result.get('user_type'),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: ((context) {
+                                            return CustomerScreen(
+                                              userDetails: UserDetails(
+                                                name: result.get('name'),
+                                                userType:
+                                                    result.get('user_type'),
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      );
+                                    }
                                   }
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +243,7 @@ class _LoginState extends State<Login> {
                               },
                               child: Container(
                                 decoration: const BoxDecoration(
-                                  color: kAccentColor,
+                                  color: kPrimaryColor,
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(5),
                                   ),
@@ -240,7 +280,7 @@ class _LoginState extends State<Login> {
                                     'Sign Up',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: kAccentColor,
+                                      color: kPrimaryColor,
                                       fontSize: 20,
                                     ),
                                   ),

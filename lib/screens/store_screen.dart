@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:karinderya_system/models/item.dart';
 import 'package:karinderya_system/models/store_data.dart';
 import 'package:karinderya_system/models/user_details.dart';
 import 'package:karinderya_system/widgets/items_list.dart';
@@ -45,7 +44,7 @@ class _StoreScreenState extends State<StoreScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StoreAppBar(),
-              ItemList(),
+              ItemList(userDetails: widget.userDetails),
             ],
           ),
           backgroundColor: Colors.white,
