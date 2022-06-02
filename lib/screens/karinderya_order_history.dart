@@ -1,28 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:karinderya_system/constants.dart';
-import 'package:karinderya_system/models/user_details.dart';
-
 import 'package:timeago/timeago.dart' as timeago;
+import '../constants.dart';
 
-class CustomerHistory extends StatelessWidget {
+class KarinderyaHistory extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final UserDetails userDetails;
-  CustomerHistory({required this.userDetails});
+
+  final String karinderyaName;
+
+  KarinderyaHistory({required this.karinderyaName});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection('orders')
-          .where('customer', isEqualTo: userDetails.name)
+          .where('karinderya', isEqualTo: karinderyaName)
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          var results = snapshot.data!.docs;
+      builder: (context, snapshots) {
+        if (snapshots.hasData) {
+          var results = snapshots.data!.docs;
           List<ListTile> orders = [];
 
           for (var order in results) {
+            print('hahha');
             var itemName = order.get('item_name');
             var karinderyaName = order.get('karinderya');
             var totalPrice = order.get('total_price');
@@ -85,8 +87,10 @@ class CustomerHistory extends StatelessWidget {
             ));
           }
 
-          return ListView(
-            children: orders,
+          return Expanded(
+            child: ListView(
+              children: orders,
+            ),
           );
         } else {
           return const Center(
@@ -95,7 +99,7 @@ class CustomerHistory extends StatelessWidget {
             ),
           );
         }
-      }),
+      },
     );
   }
 }

@@ -40,13 +40,12 @@ class _ItemListState extends State<ItemList> {
         List<ItemView> itemViews = [];
 
         for (var item in items) {
-          var itemName = item.get('food_name');
-          var imageName = item.get('image_name');
-          var description = item.get('description');
-          var karinderyaName = item.get('karinderya_name');
-          var price = item.get('price');
-          var quantity = item.get('quantity');
-
+          var itemName = item.get('food_name').toString();
+          var imageName = item.get('image_name').toString();
+          var description = item.get('description').toString();
+          var karinderyaName = item.get('karinderya_name').toString();
+          var price = item.get('price').toString();
+          var quantity = item.get('quantity').toString();
           final itemObject = Item(
             itemName: itemName,
             quantity: quantity,

@@ -5,6 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:karinderya_system/models/store_data.dart';
 import 'package:karinderya_system/models/user_details.dart';
+import 'package:karinderya_system/screens/karinderya_order_history.dart';
+import 'package:karinderya_system/screens/order_queue.dart';
 import 'package:karinderya_system/widgets/items_list.dart';
 import 'package:karinderya_system/widgets/store_app_bar.dart';
 import '../constants.dart';
@@ -26,6 +28,7 @@ class StoreScreen extends StatefulWidget {
 }
 
 class _StoreScreenState extends State<StoreScreen> {
+  String currentScreen = 'ITEM_LIST';
   final FirebaseStorage? storage = FirebaseStorage.instance;
   final FirebaseFirestore? fireStore = FirebaseFirestore.instance;
 
@@ -40,11 +43,17 @@ class _StoreScreenState extends State<StoreScreen> {
       ),
       child: SafeArea(
         child: Scaffold(
+          extendBody: true,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               StoreAppBar(),
-              ItemList(userDetails: widget.userDetails),
+              currentScreen == 'ITEM_LIST'
+                  ? ItemList(userDetails: widget.userDetails)
+                  : currentScreen == 'ORDER_QUEUE'
+                      ? OrderQueue(userDetails: widget.userDetails)
+                      : KarinderyaHistory(
+                          karinderyaName: widget.userDetails.name),
             ],
           ),
           backgroundColor: Colors.white,
@@ -69,16 +78,44 @@ class _StoreScreenState extends State<StoreScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      if (currentScreen != 'ITEM_LIST') {
+                        currentScreen = 'ITEM_LIST';
+                      }
+                    });
+                  },
                   icon: Icon(Icons.list_alt),
-                  tooltip: 'Deliveries',
+                  tooltip: 'Item List',
                   color: Colors.white,
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.chat_outlined),
-                  tooltip: 'Messages',
-                  color: Colors.white,
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (currentScreen != 'ORDER_QUEUE') {
+                            currentScreen = 'ORDER_QUEUE';
+                          }
+                        });
+                      },
+                      icon: Icon(Icons.queue),
+                      tooltip: 'Order Queue',
+                      color: Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (currentScreen != 'ORDER_HISTORY') {
+                            currentScreen = 'ORDER_HISTORY';
+                          }
+                        });
+                      },
+                      icon: Icon(Icons.history),
+                      tooltip: 'History',
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
               ],
             ),

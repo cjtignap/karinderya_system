@@ -136,6 +136,7 @@ class _AddToCartState extends State<AddToCart> {
                         'total_price': _quantity * double.parse(widget.price),
                         'item_name': widget.itemName,
                         'item_id': widget.docID,
+                        'timestamp': DateTime.now().millisecondsSinceEpoch,
                       });
 
                       if (int.parse(widget.itemsLeft) - _quantity <= 0) {

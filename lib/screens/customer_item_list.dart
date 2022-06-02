@@ -103,7 +103,8 @@ class CustomerItemList extends StatelessWidget {
                             showDialog(
                               context: context,
                               builder: (context) => ViewKarinderyaDialog(
-                                  karinderyaName: karinderyaName),
+                                  karinderyaName: karinderyaName,
+                                  userDetails: userDetails),
                             );
                           },
                         ),

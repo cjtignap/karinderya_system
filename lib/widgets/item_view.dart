@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class ItemView extends StatefulWidget {
 }
 
 class _ItemViewState extends State<ItemView> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String imageURL = '';
   @override
   Widget build(BuildContext context) {
@@ -31,16 +33,20 @@ class _ItemViewState extends State<ItemView> {
               child: Row(
                 children: [
                   FutureBuilder(
-                      future: ref.getDownloadURL(),
-                      builder: (context, snapshot) {
-                        return Image(
-                          image: snapshot.data != null
-                              ? NetworkImage(snapshot.data.toString())
-                              : AssetImage('images/welcome_banner.png')
-                                  as ImageProvider,
-                          width: 130,
-                        );
-                      }),
+                    future: ref.getDownloadURL(),
+                    builder: (context, snapshot) {
+                      return Image(
+                        image: snapshot.data != null
+                            ? NetworkImage(snapshot.data.toString())
+                            : AssetImage('images/welcome_banner.png')
+                                as ImageProvider,
+                        width: 130,
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,12 +63,12 @@ class _ItemViewState extends State<ItemView> {
                         SizedBox(height: 10),
                         Text(
                           widget.item.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 13,
                           ),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Row(
                           children: [
                             Column(
@@ -78,10 +84,18 @@ class _ItemViewState extends State<ItemView> {
                               ],
                               crossAxisAlignment: CrossAxisAlignment.start,
                             ),
-                            const Icon(
-                              Icons.edit_note,
-                              size: 30,
-                              color: kPrimaryColor,
+                            GestureDetector(
+                              child: const Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: kPrimaryColor,
+                              ),
+                              onTap: () async {
+                                await _firestore
+                                    .collection('live_items')
+                                    .doc(widget.item.docId)
+                                    .delete();
+                              },
                             ),
                           ],
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
