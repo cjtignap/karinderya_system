@@ -54,6 +54,7 @@ class _ItemListState extends State<ItemList> {
             karinderyaName: karinderyaName,
             imageName: imageName,
             description: description,
+            docId: item.id,
           );
           itemViews.add(ItemView(item: itemObject));
         }

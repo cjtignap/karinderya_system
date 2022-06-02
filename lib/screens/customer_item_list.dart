@@ -2,13 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:karinderya_system/constants.dart';
+import 'package:karinderya_system/models/user_details.dart';
+import 'package:karinderya_system/widgets/add_to_cart.dart';
 
 import '../widgets/view_karinderya_dialog.dart';
 
 class CustomerItemList extends StatelessWidget {
+  final UserDetails userDetails;
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  CustomerItemList({required this.userDetails});
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -32,6 +35,7 @@ class CustomerItemList extends StatelessWidget {
           var karinderyaName = item.get('karinderya_name');
           var price = item.get('price');
           var quantity = item.get('quantity');
+          var docID = item.id;
 
           itemViews.add(
             Padding(
@@ -40,7 +44,7 @@ class CustomerItemList extends StatelessWidget {
                 right: 10.0,
               ),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: Colors.black26,
@@ -60,14 +64,25 @@ class CustomerItemList extends StatelessWidget {
                         return Image(
                           image: snapshot.data != null
                               ? NetworkImage(snapshot.data.toString())
-                              : AssetImage('images/welcome_banner.png')
+                              : const AssetImage('images/welcome_banner.png')
                                   as ImageProvider,
                           height: 150,
                         );
                       },
                     ),
                     trailing: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AddToCart(
+                                  itemName: itemName,
+                                  price: price,
+                                  itemsLeft: quantity.toString(),
+                                  docID: docID,
+                                  karinderyaName: karinderyaName,
+                                  userDetails: userDetails,
+                                ));
+                      },
                       child: const Icon(
                         Icons.add_circle,
                         color: kPrimaryColor,

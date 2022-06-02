@@ -43,8 +43,10 @@ class CustomerScreen extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: [
-                    CustomerItemList(),
-                    CustomerHistory(),
+                    CustomerItemList(
+                      userDetails: userDetails,
+                    ),
+                    CustomerHistory(userDetails: userDetails),
                   ],
                 ),
               )
